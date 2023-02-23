@@ -24,7 +24,10 @@ void shiftedCoordinates(double home_lat, double home_lon, double dx, double dy, 
 }
 
 std::string reqURL(double lat, double lon){
-  return "https://api.opentopodata.org/v1/eudem25m?locations=" + std::to_string(lat) + "," + std::to_string(lon);
+  
+  std::string request_url = "https://api.opentopodata.org/v1/eudem25m?locations=" + std::to_string(lat) + "," + std::to_string(lon);
+  // std::cout << ">>>>>>>>>>>>>>>>>>>>>>>>requested url: " << request_url << std::endl;
+  return request_url;
 }
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
@@ -36,6 +39,7 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
 
 double getElevation(double lat, double lon) {
   auto x = lon + lat;
+  reqURL(lat, lon);
   
   CURL *curl;
   //CURLcode res;
@@ -43,7 +47,7 @@ double getElevation(double lat, double lon) {
   curl = curl_easy_init();
       if(curl) {
             std::cout<< "curl initiated" << std::endl;
-            curl_easy_setopt(curl, CURLOPT_URL, "http://www.google.com");
+            curl_easy_setopt(curl, CURLOPT_URL, "https://api.opentopodata.org/v1/eudem25m?locations=32.330000,43.200000");
             // curl_easy_setopt(curl, CURLOPT_URL, reqURL(lat, lon));
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
