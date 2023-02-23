@@ -35,19 +35,23 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
 
 
 double getElevation(double lat, double lon) {
+  auto x = lon + lat;
+  
   CURL *curl;
   //CURLcode res;
   std::string readBuffer;
   curl = curl_easy_init();
       if(curl) {
-            curl_easy_setopt(curl, CURLOPT_URL, reqURL(lat, lon));
+            std::cout<< "curl initiated" << std::endl;
+            curl_easy_setopt(curl, CURLOPT_URL, "http://www.google.com");
+            // curl_easy_setopt(curl, CURLOPT_URL, reqURL(lat, lon));
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
             curl_easy_perform(curl);
             curl_easy_cleanup(curl);
       }
-  std::cout<< readBuffer;
-  return 0.0;
+  std::cout<< readBuffer << "." << std::endl;
+  return x;
 }
 
 int main(int argc, char ** argv)
@@ -82,6 +86,7 @@ int main(int argc, char ** argv)
         "elevation",
         *it) = -0.04 + 0.2 * std::sin(3.0 * time.seconds() + 5.0 * position.y()) * position.x();
     }
+    getElevation(32.33, 43.2);
 
     // Publish grid map.
     map.setTimestamp(time.nanoseconds());

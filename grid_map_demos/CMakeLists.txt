@@ -30,6 +30,7 @@ set(dependencies
   grid_map_msgs
   grid_map_ros
   rclcpp
+  CURL
 )
 
 ###########
@@ -161,7 +162,7 @@ ament_target_dependencies(
   ${dependencies}
 )
 
-target_link_libraries(CURL::libcurl filters_demo filters_demo_lib)
+target_link_libraries(filters_demo filters_demo_lib)
 
 #target_link_libraries(grid_map_demos CURL::libcurl)
 
