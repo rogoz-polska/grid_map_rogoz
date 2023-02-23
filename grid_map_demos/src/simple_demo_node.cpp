@@ -5,6 +5,51 @@
 #include <memory>
 #include <utility>
 
+#include <jsoncpp/json/json.h>
+#include <curl/curl.h>
+#include <string.h>
+
+// #include <Poco/Net/HTTPClientSession.h>
+// #include <Poco/Net/HTTPRequest.h>
+// #include <Poco/Net/HTTPResponse.h>
+// #include <Poco/JSON/Parser.h>
+// #include <Poco/JSON/Object.h>
+
+void shiftedCoordinates(double home_lat, double home_lon, double dx, double dy, double *shiftedLat, double *shiftedLon){
+  double R = 6378137;
+  double dlon = dx/R;
+  double dlat = dy/R;
+  *shiftedLon = home_lon + dlon;
+  *shiftedLat = home_lat + dlat;
+}
+
+std::string reqURL(double lat, double lon){
+  return "https://api.opentopodata.org/v1/eudem25m?locations=" + std::to_string(lat) + "," + std::to_string(lon);
+}
+
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
+
+
+double getElevation(double lat, double lon) {
+  CURL *curl;
+  //CURLcode res;
+  std::string readBuffer;
+  curl = curl_easy_init();
+      if(curl) {
+            curl_easy_setopt(curl, CURLOPT_URL, reqURL(lat, lon));
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+            curl_easy_perform(curl);
+            curl_easy_cleanup(curl);
+      }
+  std::cout<< readBuffer;
+  return 0.0;
+}
+
 int main(int argc, char ** argv)
 {
   // Initialize node and publisher.
@@ -16,13 +61,14 @@ int main(int argc, char ** argv)
   // Create grid map.
   grid_map::GridMap map({"elevation"});
   map.setFrameId("map");
-  map.setGeometry(grid_map::Length(1.2, 2.0), 0.03);
+  map.setGeometry(grid_map::Length(3, 3), 0.03);
   RCLCPP_INFO(
     node->get_logger(),
     "Created map with size %f x %f m (%i x %i cells).",
     map.getLength().x(), map.getLength().y(),
     map.getSize()(0), map.getSize()(1));
 
+  getElevation(32.33, 43.2);
   // Work with grid map in a loop.
   rclcpp::Rate rate(30.0);
   rclcpp::Clock clock;

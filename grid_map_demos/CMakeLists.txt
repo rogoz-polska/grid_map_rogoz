@@ -15,6 +15,8 @@ find_package(OCTOMAP REQUIRED)
 find_package(octomap_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(CURL REQUIRED)
+find_package(jsoncpp REQUIRED)
 
 find_package(OpenCV REQUIRED
   COMPONENTS
@@ -159,7 +161,9 @@ ament_target_dependencies(
   ${dependencies}
 )
 
-target_link_libraries(filters_demo filters_demo_lib)
+target_link_libraries(CURL::libcurl filters_demo filters_demo_lib)
+
+#target_link_libraries(grid_map_demos CURL::libcurl)
 
 ament_target_dependencies(
   filters_demo_lib SYSTEM
