@@ -16,7 +16,8 @@ find_package(octomap_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(CURL REQUIRED)
-find_package(jsoncpp REQUIRED)
+#find_package(jsoncpp REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 find_package(OpenCV REQUIRED
   COMPONENTS
